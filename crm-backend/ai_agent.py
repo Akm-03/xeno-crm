@@ -43,7 +43,7 @@ def generate_campaign_strategy(user_prompt: str) -> CampaignStrategy:
 
     # We use Llama 3 70B via Groq for excellent reasoning and speed
     strategy = client.chat.completions.create(
-        model="llama3-70b-8192", 
+        model="llama-3.3-70b-versatile", 
         response_model=CampaignStrategy,
         messages=[
             {"role": "system", "content": system_prompt},
