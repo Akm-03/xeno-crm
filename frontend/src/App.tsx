@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Send, Sparkles, Activity } from 'lucide-react';
-import { generateCampaign, launchCampaign, fetchStats, CampaignStrategy } from './api';
+import { generateCampaign, launchCampaign, fetchStats, type CampaignStrategy } from './api';
 
 export default function App() {
   const [prompt, setPrompt] = useState('');
