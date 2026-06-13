@@ -14,7 +14,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Initialize the Groq client and patch it with Instructor
 # Replace "gsk_..." with your actual Groq API key
-client = instructor.from_groq(Groq(api_key="your_groq_api_key_here"))
+client = instructor.from_groq(Groq(api_key=GROQ_API_KEY))
 
 # 1. Define the exact JSON structure we want the AI to return
 class CampaignStrategy(BaseModel):
