@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000', // Your FastAPI CRM port
+  baseURL: 'https://xeno-crm-1-0z9a.onrender.com', // Your FastAPI CRM port
 });
 
 export interface CampaignStrategy {
