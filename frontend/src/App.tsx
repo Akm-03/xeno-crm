@@ -1,6 +1,6 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Sparkles, Send, Activity, Zap, ArrowRight } from 'lucide-react';
+import { Sparkles, Send, Activity, Zap, ArrowRight, Database } from 'lucide-react';
 import { ResponsiveContainer, BarChart, XAxis, YAxis, Tooltip, Bar } from 'recharts';
 
 // Set up axios instance pointing to your Render CRM backend
@@ -27,7 +27,6 @@ export default function App() {
   const [audienceSize, setAudienceSize] = useState(0);
   const [stats, setStats] = useState<StatItem[]>([]);
 
-  // Periodically fetch real-time stats from the backend
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -41,7 +40,6 @@ export default function App() {
         console.error("Error fetching execution stats:", error);
       }
     };
-
     fetchStats();
     const interval = setInterval(fetchStats, 3000);
     return () => clearInterval(interval);
@@ -56,7 +54,7 @@ export default function App() {
       setAudienceSize(response.data.audience_size);
     } catch (error) {
       console.error(error);
-      alert("Error generating campaign strategy. Please check backend logs.");
+      alert("Error generating campaign strategy. Check backend logs.");
     } finally {
       setIsGenerating(false);
     }
@@ -65,10 +63,7 @@ export default function App() {
   const handleLaunch = async () => {
     if (!strategy) return;
     try {
-      await api.post('/api/launch', {
-        strategy,
-        audience_size: audienceSize,
-      });
+      await api.post('/api/launch', { strategy, audience_size: audienceSize });
       alert(`Campaign launched successfully to ${audienceSize} customers!`);
       setPrompt('');
       setStrategy(null);
@@ -79,37 +74,41 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-violet-100 via-white to-fuchsia-50 p-6 md:p-10 font-sans text-gray-800 selection:bg-fuchsia-200 selection:text-fuchsia-900">
-      <div className="max-w-6xl mx-auto space-y-10">
+    // completely new dark theme background
+    <div className="min-h-screen bg-slate-950 text-slate-200 p-6 md:p-10 font-sans selection:bg-cyan-500/30">
+      <div className="max-w-7xl mx-auto space-y-12">
         
-        {/* Header Section - Upgraded with massive text and gradient */}
-        <header className="flex flex-col items-center justify-center text-center space-y-4 pb-8 border-b border-gray-200/50">
-          <div className="p-3 bg-gradient-to-br from-violet-100 to-fuchsia-100 rounded-2xl shadow-inner border border-white">
-            <Zap className="w-10 h-10 text-violet-600 drop-shadow-sm" />
+        {/* MASSIVE NEW HEADER */}
+        <header className="flex flex-col items-center justify-center text-center space-y-6 py-12">
+          <div className="p-4 bg-slate-900 rounded-3xl border border-slate-800 shadow-[0_0_50px_rgba(6,182,212,0.15)]">
+            <Zap className="w-12 h-12 text-cyan-400" />
           </div>
           <div>
-            <h1 className="text-5xl md:text-6xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-violet-600 via-fuchsia-600 to-indigo-600 drop-shadow-sm">
-              Xeno Spark
+            <h1 className="text-6xl md:text-8xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 pb-2">
+              XENO CORE
             </h1>
-            <p className="text-sm md:text-base font-bold text-gray-500 tracking-[0.2em] uppercase mt-3">
-              Intelligent Campaign Copilot
+            <p className="text-lg md:text-xl font-medium text-slate-400 tracking-[0.3em] uppercase mt-4 flex items-center justify-center">
+              <Database className="w-5 h-5 mr-3 text-blue-500" />
+              Algorithmic Audience Routing
             </p>
           </div>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           
-          {/* Left Column: AI Command Center */}
-          <section className="bg-white/70 backdrop-blur-md p-8 rounded-3xl shadow-xl shadow-violet-100/50 border border-white/60 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-200/50 hover:-translate-y-1 group">
-            <h2 className="text-2xl font-extrabold mb-6 flex items-center text-gray-800 group-hover:text-violet-700 transition-colors">
-              <Send className="w-6 h-6 mr-3 text-violet-500" />
-              Campaign Intent
+          {/* Left Column: Command Center */}
+          <section className="bg-slate-900 p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600"></div>
+            
+            <h2 className="text-3xl font-bold mb-6 flex items-center text-white">
+              <Send className="w-8 h-8 mr-4 text-cyan-400" />
+              Mission Intent
             </h2>
             
             <textarea
-              className="w-full p-5 bg-white border-2 border-gray-100 rounded-2xl focus:ring-4 focus:ring-fuchsia-400/20 focus:border-fuchsia-400 outline-none resize-none transition-all duration-200 shadow-inner text-gray-700 text-lg"
+              className="w-full p-6 bg-slate-950 border border-slate-800 rounded-3xl focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none resize-none text-xl text-slate-300 placeholder-slate-600 transition-all"
               rows={4}
-              placeholder="e.g., 'Target shoppers who bought coffee in the last 30 days and send them a WhatsApp promo code.'"
+              placeholder="e.g., 'Target big spenders in Electronics over $200 and offer a 15% discount via Email.'"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
             />
@@ -117,110 +116,87 @@ export default function App() {
             <button
               onClick={handleGenerate}
               disabled={isGenerating || !prompt}
-              className="mt-6 w-full flex items-center justify-center bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white font-bold py-4 rounded-2xl shadow-xl shadow-fuchsia-200 hover:from-violet-500 hover:to-fuchsia-500 hover:shadow-2xl hover:shadow-fuchsia-300 transform hover:scale-[1.02] active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none text-lg"
+              className="mt-6 w-full flex items-center justify-center bg-slate-800 text-white font-bold py-5 rounded-2xl hover:bg-slate-700 border border-slate-700 hover:border-cyan-500 transition-all duration-300 text-xl group disabled:opacity-50"
             >
               {isGenerating ? (
-                <span className="animate-pulse flex items-center">
-                  <Activity className="w-5 h-5 mr-2 animate-spin" /> Analyzing Database...
+                <span className="animate-pulse flex items-center text-cyan-400">
+                  <Activity className="w-6 h-6 mr-3 animate-spin" /> Processing Matrix...
                 </span>
               ) : (
-                <span className="flex items-center">
-                  Generate Strategy <ArrowRight className="w-5 h-5 ml-2" />
+                <span className="flex items-center group-hover:text-cyan-400 transition-colors">
+                  Compile Strategy <ArrowRight className="w-6 h-6 ml-3 transform group-hover:translate-x-2 transition-transform" />
                 </span>
               )}
             </button>
 
-            {/* AI Strategy Preview Card - Highlighting text */}
+            {/* AI Strategy Preview */}
             {strategy && (
-              <div className="mt-8 p-7 bg-gradient-to-br from-violet-50 to-fuchsia-50 rounded-2xl border-2 border-violet-200 animate-in fade-in slide-in-from-bottom-8 shadow-lg relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-violet-400 to-fuchsia-400"></div>
-                <h3 className="text-xl font-black text-violet-900 mb-4 flex items-center">
-                  <Sparkles className="w-5 h-5 mr-2 text-fuchsia-500" />
-                  AI Proposal Ready
+              <div className="mt-8 p-8 bg-slate-950 rounded-3xl border border-slate-800 relative">
+                <h3 className="text-2xl font-bold text-cyan-400 mb-6 flex items-center">
+                  <Sparkles className="w-6 h-6 mr-3 text-purple-400" />
+                  Parameters Locked
                 </h3>
                 
-                <ul className="space-y-3 text-base text-violet-800/90 mb-6 font-medium">
-                  <li className="flex justify-between items-center border-b border-violet-100 pb-2">
-                    <span>Target Category:</span> 
-                    <span className="font-bold text-violet-900 bg-white px-3 py-1 rounded-lg shadow-sm border border-violet-100">{strategy.target_category}</span>
-                  </li>
-                  <li className="flex justify-between items-center border-b border-violet-100 pb-2">
-                    <span>Minimum Spend:</span> 
-                    <span className="font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg shadow-sm border border-emerald-100">${strategy.min_order_value}</span>
-                  </li>
-                  <li className="flex justify-between items-center border-b border-violet-100 pb-2">
-                    <span>Audience Size:</span> 
-                    <span className="font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-lg shadow-sm border border-blue-100">{audienceSize} shoppers</span>
-                  </li>
-                  <li className="flex justify-between items-center pb-1">
-                    <span>Optimal Channel:</span> 
-                    <span className="font-bold text-fuchsia-700 bg-fuchsia-100 px-3 py-1 rounded-lg shadow-sm border border-fuchsia-200">{strategy.recommended_channel}</span>
-                  </li>
-                </ul>
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800">
+                    <span className="block text-slate-500 text-sm font-bold mb-1 uppercase tracking-wider">Category</span>
+                    <span className="text-xl font-bold text-white">{strategy.target_category}</span>
+                  </div>
+                  <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800">
+                    <span className="block text-slate-500 text-sm font-bold mb-1 uppercase tracking-wider">Min Spend</span>
+                    <span className="text-xl font-bold text-emerald-400">${strategy.min_order_value}</span>
+                  </div>
+                  <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800">
+                    <span className="block text-slate-500 text-sm font-bold mb-1 uppercase tracking-wider">Audience</span>
+                    <span className="text-xl font-bold text-blue-400">{audienceSize}</span>
+                  </div>
+                  <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800">
+                    <span className="block text-slate-500 text-sm font-bold mb-1 uppercase tracking-wider">Channel</span>
+                    <span className="text-xl font-bold text-purple-400">{strategy.recommended_channel}</span>
+                  </div>
+                </div>
 
-                <div className="p-5 bg-white rounded-xl text-base text-gray-700 italic border border-violet-100 shadow-sm relative">
-                  <span className="text-4xl text-violet-200 absolute top-2 left-2 select-none">"</span>
-                  <span className="relative z-10">{strategy.message_template}</span>
+                <div className="p-6 bg-slate-900 rounded-2xl text-lg text-slate-300 font-mono border border-slate-800 border-l-4 border-l-cyan-500">
+                  {strategy.message_template}
                 </div>
 
                 <button
                   onClick={handleLaunch}
-                  className="mt-6 w-full flex justify-center items-center bg-gray-900 text-white font-black text-lg py-4 rounded-xl hover:bg-black shadow-xl shadow-gray-400/50 transform hover:-translate-y-1 active:scale-95 transition-all duration-200"
+                  className="mt-8 w-full bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-black text-xl py-5 rounded-2xl hover:from-cyan-500 hover:to-blue-500 shadow-[0_0_30px_rgba(6,182,212,0.3)] transition-all duration-300 transform hover:-translate-y-1"
                 >
-                  🚀 Launch to {audienceSize} Shoppers
+                  INITIALIZE DEPLOYMENT
                 </button>
               </div>
             )}
           </section>
 
-          {/* Right Column: Real-Time Dashboard */}
-          <section className="bg-white/70 backdrop-blur-md p-8 rounded-3xl shadow-xl shadow-violet-100/50 border border-white/60 transition-all duration-300 hover:shadow-2xl hover:shadow-violet-200/50 hover:-translate-y-1 flex flex-col group">
-            <h2 className="text-2xl font-extrabold mb-2 flex items-center text-gray-800 group-hover:text-fuchsia-700 transition-colors">
-              <Activity className="w-6 h-6 mr-3 text-fuchsia-500" />
-              Live Loop Execution
+          {/* Right Column: Dashboard */}
+          <section className="bg-slate-900 p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl flex flex-col relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-full h-1 bg-gradient-to-l from-purple-500 to-blue-600"></div>
+
+            <h2 className="text-3xl font-bold mb-3 flex items-center text-white">
+              <Activity className="w-8 h-8 mr-4 text-purple-400" />
+              Live Telemetry
             </h2>
-            <p className="text-base text-gray-500 font-medium mb-8">
-              Real-time callback monitoring from the channel delivery service.
+            <p className="text-lg text-slate-500 font-medium mb-8">
+              Monitoring global channel webhooks.
             </p>
             
             <div className="flex-grow min-h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={stats} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                  <XAxis 
-                    dataKey="name" 
-                    stroke="#6b7280" 
-                    fontSize={13} 
-                    tickLine={false} 
-                    axisLine={false}
-                    tick={{ fill: '#4b5563', fontWeight: 600 }}
-                  />
-                  <YAxis 
-                    stroke="#6b7280" 
-                    fontSize={13} 
-                    tickLine={false} 
-                    axisLine={false} 
-                  />
+                  <XAxis dataKey="name" stroke="#475569" fontSize={14} tickLine={false} axisLine={false} tick={{ fill: '#94a3b8', fontWeight: 600 }} />
+                  <YAxis stroke="#475569" fontSize={14} tickLine={false} axisLine={false} tick={{ fill: '#94a3b8' }} />
                   <Tooltip 
-                    cursor={{ fill: 'rgba(139, 92, 246, 0.05)' }} 
-                    contentStyle={{ 
-                      borderRadius: '16px', 
-                      border: 'none', 
-                      boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-                      fontWeight: 'bold',
-                      color: '#4c1d95'
-                    }}
+                    cursor={{ fill: '#1e293b' }} 
+                    contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', borderRadius: '16px', color: '#fff' }}
+                    itemStyle={{ color: '#22d3ee', fontWeight: 'bold' }}
                   />
-                  {/* Upgraded bar styling */}
-                  <Bar 
-                    dataKey="count" 
-                    fill="url(#colorUv)" 
-                    radius={[8, 8, 0, 0]}
-                    animationDuration={1500}
-                  />
+                  <Bar dataKey="count" fill="url(#colorNeon)" radius={[8, 8, 0, 0]} animationDuration={1000} />
                   <defs>
-                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8b5cf6" stopOpacity={1}/>
-                      <stop offset="95%" stopColor="#d946ef" stopOpacity={0.8}/>
+                    <linearGradient id="colorNeon" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#22d3ee" stopOpacity={1}/>
+                      <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.6}/>
                     </linearGradient>
                   </defs>
                 </BarChart>
