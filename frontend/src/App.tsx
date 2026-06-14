@@ -31,15 +31,14 @@ export default function App() {
     const fetchStats = async () => {
       try {
         const response = await api.get('/api/stats');
-        const data = Object.entries(response.data).map(([key, value]) => ({
-          name: key.toUpperCase(),
-          count: value as number,
-        }));
-        setStats(data);
+        // The Python backend now formats this perfectly, 
+        // so we can just pass it directly to Recharts!
+        setStats(response.data);
       } catch (error) {
         console.error("Error fetching execution stats:", error);
       }
     };
+    
     fetchStats();
     const interval = setInterval(fetchStats, 3000);
     return () => clearInterval(interval);
