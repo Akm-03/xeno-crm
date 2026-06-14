@@ -30,7 +30,7 @@ class WebhookPayload(BaseModel):
 class CampaignRequest(BaseModel):
     prompt: str
 
-@app.post("/webhook/receipt")
+@app.post("/api/webhook/receipt")
 def receive_receipt(payload: WebhookPayload, db: Session = Depends(get_db)):
     """
     This endpoint receives the asynchronous callback from the Channel Stub.
@@ -47,7 +47,7 @@ def receive_receipt(payload: WebhookPayload, db: Session = Depends(get_db)):
     return {"message": "Status updated successfully"}
 
 # A simple endpoint to test the queue manually before we add AI
-@app.post("/test/fire-event")
+@app.post("/api/test/fire-event")
 def test_dispatch(db: Session = Depends(get_db)):
     # Create a dummy log in the database
     new_log = CommunicationLog(campaign_id=None, customer_id=1, status="PENDING")
