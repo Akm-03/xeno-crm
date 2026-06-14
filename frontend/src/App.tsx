@@ -5,7 +5,7 @@ import { ResponsiveContainer, BarChart, XAxis, YAxis, Tooltip, Bar } from 'recha
 
 // Set up axios instance pointing to your Render CRM backend
 const api = axios.create({
-  baseURL: 'https://xeno-crm.onrender.com', // Replace with your actual Render CRM URL
+  baseURL: 'https://xeno-crm-1-0z9a.onrender.com', // Replace with your actual Render CRM URL
 });
 
 interface CampaignStrategy {
